@@ -15,6 +15,7 @@ import (
 	"github.com/0DayMonxrch/project-management-system/internal/middleware"
 	"github.com/0DayMonxrch/project-management-system/internal/repository"
 	"github.com/0DayMonxrch/project-management-system/internal/service"
+	"github.com/0DayMonxrch/project-management-system/migrations"
 	"github.com/0DayMonxrch/project-management-system/pkg/logger"
 )
 
@@ -45,6 +46,12 @@ func main() {
 
 	db := client.Database(cfg.DB.Name)
 	log.Info("connected to mongodb", "database", cfg.DB.Name)
+
+	// Run migrations
+	if err := migrations.RunIndexes(db, log); err != nil {
+		log.Error("failed to run migrations", "error", err)
+		os.Exit(1)
+	}
 
 	// Repositories
 	userRepo := repository.NewUserRepository(db)
