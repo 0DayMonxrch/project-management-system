@@ -6,6 +6,7 @@ import (
 
 	"github.com/0DayMonxrch/project-management-system/internal/domain"
 	"github.com/0DayMonxrch/project-management-system/internal/middleware"
+	"github.com/0DayMonxrch/project-management-system/pkg/validator"
 )
 
 type ProjectHandler struct {
@@ -23,6 +24,15 @@ func (h *ProjectHandler) CreateProject(w http.ResponseWriter, r *http.Request) {
 	}
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid request body"})
+		return
+	}
+
+	if err := validator.New().
+		Required("name", body.Name).
+		MaxLength("name", body.Name, 100).
+		Required("description", body.Description).
+		Validate(); err != nil {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})
 		return
 	}
 

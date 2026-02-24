@@ -6,6 +6,7 @@ import (
 
 	"github.com/0DayMonxrch/project-management-system/internal/domain"
 	"github.com/0DayMonxrch/project-management-system/internal/middleware"
+	"github.com/0DayMonxrch/project-management-system/pkg/validator"
 )
 
 type AuthHandler struct {
@@ -27,6 +28,17 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if err := validator.New().
+		Required("name", body.Name).
+		Required("email", body.Email).
+		Email("email", body.Email).
+		Required("password", body.Password).
+		MinLength("password", body.Password, 8).
+		Validate(); err != nil {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})
+		return
+	}
+
 	if err := h.svc.Register(r.Context(), body.Name, body.Email, body.Password); err != nil {
 		writeError(w, err)
 		return
@@ -41,6 +53,15 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	}
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid request body"})
+		return
+	}
+
+	if err := validator.New().
+		Required("email", body.Email).
+		Email("email", body.Email).
+		Required("password", body.Password).
+		Validate(); err != nil {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})
 		return
 	}
 
