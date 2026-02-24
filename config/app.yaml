@@ -1,24 +1,24 @@
 app:
   name: "project-camp-backend"
   env: "development"
-  port: 8080
+  port: 3000
 
 db:
-  uri: "${MONGO_URI}"
-  name: "${MONGO_DB_NAME}"
+  uri: ""
+  name: ""
 
 jwt:
-  access_secret: "${JWT_ACCESS_SECRET}"
-  refresh_secret: "${JWT_REFRESH_SECRET}"
+  access_secret: ""
+  refresh_secret: ""
   access_expiry_minutes: 15
   refresh_expiry_days: 7
 
 smtp:
-  host: "${SMTP_HOST}"
+  host: ""
   port: 587
-  username: "${SMTP_USERNAME}"
-  password: "${SMTP_PASSWORD}"
-  from: "${SMTP_FROM}"
+  username: ""
+  password: ""
+  from: ""
 
 upload:
   dir: "public/images"

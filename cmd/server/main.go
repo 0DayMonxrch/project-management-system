@@ -17,9 +17,11 @@ import (
 	"github.com/0DayMonxrch/project-management-system/internal/service"
 	"github.com/0DayMonxrch/project-management-system/migrations"
 	"github.com/0DayMonxrch/project-management-system/pkg/logger"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	_ = godotenv.Load()
 	// Config
 	cfg, err := config.Load()
 	if err != nil {
