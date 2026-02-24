@@ -109,6 +109,16 @@ func (h *ProjectHandler) AddMember(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if err := validator.New().
+		Required("email", body.Email).
+		Email("email", body.Email).
+		Required("role", string(body.Role)).
+		OneOf("role", string(body.Role), "admin", "project_admin", "member").
+		Validate(); err != nil {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})
+		return
+	}
+
 	userID, _ := middleware.GetUserID(r)
 	projectID := r.PathValue("projectId")
 
@@ -135,6 +145,14 @@ func (h *ProjectHandler) UpdateMemberRole(w http.ResponseWriter, r *http.Request
 	}
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid request body"})
+		return
+	}
+
+	if err := validator.New().
+		Required("role", string(body.Role)).
+		OneOf("role", string(body.Role), "admin", "project_admin", "member").
+		Validate(); err != nil {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})
 		return
 	}
 

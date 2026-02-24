@@ -6,6 +6,7 @@ import (
 
 	"github.com/0DayMonxrch/project-management-system/internal/domain"
 	"github.com/0DayMonxrch/project-management-system/internal/middleware"
+	"github.com/0DayMonxrch/project-management-system/pkg/validator"
 )
 
 type NoteHandler struct {
@@ -23,6 +24,15 @@ func (h *NoteHandler) CreateNote(w http.ResponseWriter, r *http.Request) {
 	}
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid request body"})
+		return
+	}
+
+	if err := validator.New().
+		Required("title", body.Title).
+		MaxLength("title", body.Title, 200).
+		Required("content", body.Content).
+		Validate(); err != nil {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})
 		return
 	}
 
@@ -66,6 +76,14 @@ func (h *NoteHandler) UpdateNote(w http.ResponseWriter, r *http.Request) {
 	}
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid request body"})
+		return
+	}
+
+	if err := validator.New().
+		Required("title", body.Title).
+		Required("content", body.Content).
+		Validate(); err != nil {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})
 		return
 	}
 
