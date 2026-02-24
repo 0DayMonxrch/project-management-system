@@ -2,7 +2,10 @@ module github.com/0DayMonxrch/project-management-system
 
 go 1.25.5
 
-require github.com/spf13/viper v1.21.0
+require (
+	github.com/spf13/viper v1.21.0
+	go.mongodb.org/mongo-driver/v2 v2.5.0
+)
 
 require (
 	github.com/fsnotify/fsnotify v1.9.0 // indirect
